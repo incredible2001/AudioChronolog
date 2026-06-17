@@ -1,0 +1,78 @@
+{% extends "gui/base.html" %}
+{% block title %}AudioChronolog - 项目列表{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+    <h1 style="font-size:1.3rem;">我的项目</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('createModal').classList.add('active')">
+        ＋ 创建新项目
+    </button>
+</div>
+
+{% if projects %}
+<div class="card-grid">
+    {% for p in projects %}
+    <a href="/project/{{ p.name }}" class="project-card card">
+        <div class="project-icon">📁</div>
+        <div class="project-name">{{ p.name }}</div>
+        <div class="project-meta">
+            🎙️ {{ p.audio_count }} 个录音
+            {% if p.last_date %} · 📅 {{ p.last_date }}{% endif %}
+            {% if p.has_reports %} · <span class="badge badge-green">已有报告</span>
+            {% else %} · <span class="badge badge-gray">暂无报告</span>{% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center; padding:3rem; color:#64748b;">
+    <div style="font-size:3rem; margin-bottom:1rem;">📂</div>
+    <p>还没有项目，点击右上角创建一个吧！</p>
+</div>
+{% endif %}
+
+{# 创建项目弹窗 #}
+<div class="modal-overlay" id="createModal">
+    <div class="modal">
+        <h2>✨ 创建新项目</h2>
+        <form id="createForm" onsubmit="return createProject(event)">
+            <div class="form-group">
+                <label>项目名称</label>
+                <input type="text" id="projName" placeholder="例如：产品周会" required>
+            </div>
+            <div class="form-group">
+                <label>Background（项目背景描述）</label>
+                <textarea id="projBg" rows="4" placeholder="描述项目背景、参会人员、说话人识别依据等..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">取消</button>
+                <button type="submit" class="btn btn-primary">创建</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function createProject(e) {
+    e.preventDefault();
+    const name = document.getElementById('projName').value.trim();
+    const bg = document.getElementById('projBg').value.trim();
+    if (!name) return false;
+
+    const resp = await fetch('/api/project/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name, background: bg})
+    });
+    const data = await resp.json();
+    if (data.ok) {
+        window.location.href = '/project/' + encodeURIComponent(name);
+    } else {
+        alert(data.error || '创建失败');
+    }
+    return false;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output (generated files)
+output/
+
+# 用户项目数据（只保留模板）
+input/*/
+!input/_模板项目/
+
+# 需求文档
+start*.txt
+
+# 启动脚本（Windows 专用，不影响他人）
+启动GUI.bat

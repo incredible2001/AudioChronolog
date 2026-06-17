@@ -1,0 +1,226 @@
+{% extends "gui/base.html" %}
+{% block title %}{{ project_name }} - AudioChronolog{% endblock %}
+
+{% block content %}
+<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+    <a href="/" class="btn btn-secondary btn-sm" style="font-size:0.78rem; padding:0.2rem 0.5rem;">← 返回</a>
+    <span style="font-size:0.95rem; font-weight:600; color:#374151;">{{ project_name }}</span>
+</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="switchTab('reports')">📊 报告浏览</button>
+    <button class="tab" onclick="switchTab('upload')">🎙️ 上传处理</button>
+    <button class="tab" onclick="switchTab('info')">📝 项目信息</button>
+</div>
+
+{# ─── 报告浏览 Tab ─────────────────────────────────── #}
+<div class="tab-panel active" id="tab-reports">
+    {% if has_reports %}
+    <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <a href="/project/{{ project_name }}/report/index.html"
+           class="btn btn-sm btn-primary report-link" target="reportFrame">📋 索引页</a>
+        {% for m in months %}
+        <a href="/project/{{ project_name }}/report/{{ m.filename }}"
+           class="btn btn-sm btn-secondary report-link" target="reportFrame">{{ m.label }}</a>
+        {% endfor %}
+    </div>
+    <iframe name="reportFrame" class="report-frame"
+            src="/project/{{ project_name }}/report/index.html"></iframe>
+    {% else %}
+    <div class="card" style="text-align:center; padding:3rem; color:#64748b;">
+        <div style="font-size:3rem; margin-bottom:1rem;">📊</div>
+        <p>暂无报告。请先上传录音文件并处理。</p>
+        <button class="btn btn-primary" style="margin-top:1rem;" onclick="switchTab('upload')">去上传</button>
+    </div>
+    {% endif %}
+</div>
+
+{# ─── 上传处理 Tab ─────────────────────────────────── #}
+<div class="tab-panel" id="tab-upload">
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">上传录音文件</h3>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <div class="icon">📁</div>
+            <div class="text">点击或拖拽音频文件到这里</div>
+            <div class="hint">支持 mp3, wav, m4a, flac, ogg, webm, aac</div>
+        </div>
+        <input type="file" id="fileInput" multiple accept=".mp3,.wav,.m4a,.flac,.ogg,.webm,.aac"
+               style="display:none" onchange="onFilesSelected(this.files)">
+
+        <div class="file-list" id="fileList"></div>
+
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            <button class="btn btn-success" id="processBtn" onclick="startProcessing()" disabled>
+                🚀 开始处理
+            </button>
+            <button class="btn btn-secondary" id="clearBtn" onclick="clearFiles()" style="display:none;">
+                清除列表
+            </button>
+        </div>
+    </div>
+
+    <div class="progress-area" id="progressArea">
+        <div class="card" style="margin-top:1rem;">
+            <h3 style="margin-bottom:0.8rem;">处理进度</h3>
+            <div class="progress-bar-bg">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="progressStatus" style="font-size:0.9rem; margin-bottom:0.8rem; color:#475569;">准备中...</div>
+            <div class="progress-log" id="progressLog"></div>
+        </div>
+    </div>
+</div>
+
+{# ─── 项目信息 Tab ─────────────────────────────────── #}
+<div class="tab-panel" id="tab-info">
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">项目 README</h3>
+        <pre style="white-space:pre-wrap; background:#f8fafc; padding:1rem; border-radius:8px;
+                    font-size:0.88rem; max-height:500px; overflow-y:auto; line-height:1.6;">{{ readme_content }}</pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ─── Tab 切换 ─────────────────────────────────────────
+function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ─── 文件选择 ─────────────────────────────────────────
+let selectedFiles = [];
+const uploadZone = document.getElementById('uploadZone');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    onFilesSelected(e.dataTransfer.files);
+});
+
+function onFilesSelected(files) {
+    for (const f of files) {
+        if (!selectedFiles.some(s => s.name === f.name && s.size === f.size)) {
+            selectedFiles.push(f);
+        }
+    }
+    renderFileList();
+}
+
+function renderFileList() {
+    const list = document.getElementById('fileList');
+    const btn = document.getElementById('processBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    if (selectedFiles.length === 0) {
+        list.innerHTML = '';
+        btn.disabled = true;
+        clearBtn.style.display = 'none';
+        return;
+    }
+
+    btn.disabled = false;
+    clearBtn.style.display = '';
+    list.innerHTML = selectedFiles.map((f, i) => `
+        <div class="file-item">
+            <span>🎵 ${f.name} <span style="color:#94a3b8;">(${(f.size/1024/1024).toFixed(1)}MB)</span></span>
+            <button class="btn btn-sm btn-danger" onclick="removeFile(${i})" style="padding:0.2rem 0.5rem;">✕</button>
+        </div>
+    `).join('');
+}
+
+function removeFile(i) {
+    selectedFiles.splice(i, 1);
+    renderFileList();
+}
+
+function clearFiles() {
+    selectedFiles = [];
+    renderFileList();
+}
+
+// ─── 上传 + 处理 ──────────────────────────────────────
+async function startProcessing() {
+    if (selectedFiles.length === 0) return;
+
+    const btn = document.getElementById('processBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ 上传中...';
+
+    // 上传文件
+    const formData = new FormData();
+    for (const f of selectedFiles) formData.append('files', f);
+
+    const uploadResp = await fetch('/api/project/{{ project_name }}/upload', {
+        method: 'POST', body: formData
+    });
+    const uploadData = await uploadResp.json();
+    if (!uploadData.ok) {
+        alert(uploadData.error || '上传失败');
+        btn.disabled = false;
+        btn.textContent = '🚀 开始处理';
+        return;
+    }
+
+    btn.textContent = '⏳ 处理中...';
+    selectedFiles = [];
+    renderFileList();
+
+    // 显示进度区
+    const progressArea = document.getElementById('progressArea');
+    progressArea.classList.add('active');
+    const logEl = document.getElementById('progressLog');
+    const barEl = document.getElementById('progressBar');
+    const statusEl = document.getElementById('progressStatus');
+    logEl.innerHTML = '';
+
+    // SSE 接收进度
+    const evtSource = new EventSource('/api/project/{{ project_name }}/process');
+    evtSource.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        if (data.type === 'log') {
+            const cls = data.level === 'error' ? 'log-error' :
+                        data.level === 'step' ? 'log-step' : 'log-info';
+            logEl.innerHTML += `<div class="${cls}">${data.msg}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        else if (data.type === 'progress') {
+            barEl.style.width = data.percent + '%';
+            statusEl.textContent = data.msg;
+        }
+        else if (data.type === 'done') {
+            barEl.style.width = '100%';
+            barEl.style.background = 'linear-gradient(90deg, #16a34a, #4ade80)';
+            statusEl.textContent = '✅ 处理完成！';
+            logEl.innerHTML += `<div class="log-success">✅ 全部完成！成功: ${data.success}, 失败: ${data.error}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            evtSource.close();
+            btn.textContent = '🚀 开始处理';
+            btn.disabled = false;
+            // 刷新报告
+            setTimeout(() => location.reload(), 2000);
+        }
+        else if (data.type === 'error') {
+            statusEl.textContent = '❌ 处理出错';
+            logEl.innerHTML += `<div class="log-error">❌ ${data.msg}</div>`;
+            evtSource.close();
+            btn.textContent = '🚀 开始处理';
+            btn.disabled = false;
+        }
+    };
+
+    evtSource.onerror = function() {
+        evtSource.close();
+        statusEl.textContent = '连接中断';
+        btn.textContent = '🚀 开始处理';
+        btn.disabled = false;
+    };
+}
+</script>
+{% endblock %}

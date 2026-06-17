@@ -1,0 +1,142 @@
+{% extends "gui/base.html" %}
+{% block title %}使用说明 - AudioChronolog{% endblock %}
+
+{% block content %}
+<div style="max-width:800px; margin:0 auto;">
+    <a href="/" class="btn btn-secondary btn-sm" style="margin-bottom:1rem;">← 返回首页</a>
+
+    <div class="card" style="padding:2rem;">
+        <h1 style="margin-bottom:0.3rem;">📖 AudioChronolog 使用说明</h1>
+        <p style="color:#64748b; margin-bottom:2rem;">自动化处理工作录音，生成专业的会议记录报告</p>
+
+        {# ─── 快速开始 ───────────────────────────────── #}
+        <h2 style="font-size:1.2rem; color:#1e293b; margin:1.5rem 0 0.8rem; padding-bottom:0.3rem; border-bottom:2px solid #e2e8f0;">
+            🚀 快速开始（3 步搞定）
+        </h2>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin:1rem 0;">
+            <div style="text-align:center; padding:1rem; background:#f0f9ff; border-radius:10px;">
+                <div style="font-size:2rem;">①</div>
+                <div style="font-weight:700; margin:0.3rem 0;">创建项目</div>
+                <div style="font-size:0.85rem; color:#64748b;">点击首页右上角<br>「创建新项目」<br>填写名称和背景</div>
+            </div>
+            <div style="text-align:center; padding:1rem; background:#f0fdf4; border-radius:10px;">
+                <div style="font-size:2rem;">②</div>
+                <div style="font-weight:700; margin:0.3rem 0;">上传录音</div>
+                <div style="font-size:0.85rem; color:#64748b;">进入项目页<br>切换到「上传处理」<br>拖入音频文件</div>
+            </div>
+            <div style="text-align:center; padding:1rem; background:#fefce8; border-radius:10px;">
+                <div style="font-size:2rem;">③</div>
+                <div style="font-weight:700; margin:0.3rem 0;">查看报告</div>
+                <div style="font-size:0.85rem; color:#64748b;">处理完成后<br>切换到「报告浏览」<br>查看专业报告</div>
+            </div>
+        </div>
+
+        {# ─── 详细功能说明 ───────────────────────────── #}
+        <h2 style="font-size:1.2rem; color:#1e293b; margin:2rem 0 0.8rem; padding-bottom:0.3rem; border-bottom:2px solid #e2e8f0;">
+            📋 功能详解
+        </h2>
+
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">📁 创建项目</h3>
+            <ul style="padding-left:1.5rem; color:#475569; line-height:2;">
+                <li>在首页点击右上角「创建新项目」按钮</li>
+                <li><b>项目名称</b>：给你的录音项目起个名字，例如「产品周会」「课题讨论」</li>
+                <li><b>Background</b>：填写项目背景信息，<b>非常重要</b>！AI 会根据这些信息来识别说话人
+                    <br><span style="color:#64748b; font-size:0.85rem;">建议包含：参会人员姓名和角色、讨论主题、说话人识别线索（如"张三是PI，讨论时会提临床建议"）</span></li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">🎙️ 上传录音</h3>
+            <ul style="padding-left:1.5rem; color:#475569; line-height:2;">
+                <li>支持格式：<b>mp3, wav, m4a, flac, ogg, webm, aac</b></li>
+                <li>可以一次上传多个文件，也可以分批上传</li>
+                <li>支持<b>拖拽上传</b>：直接把文件从文件夹拖到网页上</li>
+                <li>文件名建议包含日期，例如 <code style="background:#f1f5f9; padding:0.1rem 0.3rem; border-radius:3px;">2026-06-17-产品评审.mp3</code></li>
+                <li>同一天的多个录音会自动编号，不会互相覆盖</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">⚡ 开始处理</h3>
+            <ul style="padding-left:1.5rem; color:#475569; line-height:2;">
+                <li>上传后点击「开始处理」按钮</li>
+                <li>处理过程分 4 步，每步都有<b>实时进度</b>显示：
+                    <br><span style="color:#2563eb;">Step 1</span> 语音转文字（Mimo AI）
+                    <br><span style="color:#2563eb;">Step 2</span> 纠错 + 识别说话人 + 生成标题（DeepSeek AI）
+                    <br><span style="color:#2563eb;">Step 3</span> 提取问题、待办、决策（DeepSeek AI）
+                    <br><span style="color:#2563eb;">Step 4</span> 更新项目记忆
+                </li>
+                <li>处理时间取决于录音时长，一般 1 分钟录音需要约 1 分钟处理</li>
+                <li>处理过程中可以切换 Tab 做其他事，不会中断</li>
+                <li>已处理过的文件再次上传会自动跳过（防重复）</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">📊 查看报告</h3>
+            <ul style="padding-left:1.5rem; color:#475569; line-height:2;">
+                <li>报告按<b>月份</b>自动拆分，点击月份按钮切换</li>
+                <li>每条记录包含：
+                    <br>• <b>标题</b>：AI 自动生成的一句话摘要
+                    <br>• <b>说话人</b>：自动识别的参会人员
+                    <br>• <b>待解决问题</b>：讨论中提到的难点
+                    <br>• <b>Action Items</b>：后续待办，含负责人和截止时间
+                    <br>• <b>关键决策</b>：已确定的结论
+                    <br>• <b>对话全文</b>：完整对话记录（可折叠/展开）
+                </li>
+                <li>报告左侧有<b>目录导航</b>，点击可快速跳转到某条记录</li>
+                <li>报告可<b>离线查看</b>，也可直接打印</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">📝 项目信息</h3>
+            <ul style="padding-left:1.5rem; color:#475569; line-height:2;">
+                <li>显示项目的 README.md 内容</li>
+                <li>Background 区块：你填写的背景信息</li>
+                <li>Memory 区块：AI 自动维护的讨论记忆，每次处理后自动追加摘要</li>
+            </ul>
+        </div>
+
+        {# ─── 常见问题 ───────────────────────────────── #}
+        <h2 style="font-size:1.2rem; color:#1e293b; margin:2rem 0 0.8rem; padding-bottom:0.3rem; border-bottom:2px solid #e2e8f0;">
+            ❓ 常见问题
+        </h2>
+
+        <div style="margin-bottom:1rem;">
+            <p style="font-weight:600; margin-bottom:0.3rem;">Q: 处理失败了怎么办？</p>
+            <p style="color:#475569; padding-left:1rem;">A: 单个文件失败不影响其他文件。检查日志中的错误信息，常见原因是 API Key 余额不足或网络问题。解决后重新上传该文件即可，已成功的不会重复处理。</p>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <p style="font-weight:600; margin-bottom:0.3rem;">Q: 说话人识别不准确怎么办？</p>
+            <p style="color:#475569; padding-left:1rem;">A: 在 Background 中补充更多说话人线索，例如"张三说话偏学术风格，李四负责临床部分"。也可以在录音同目录放一个同名 .md 文件，写上"今日参会：张三、李四"作为补充提示。</p>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <p style="font-weight:600; margin-bottom:0.3rem;">Q: 录音文件名有要求吗？</p>
+            <p style="color:#475569; padding-left:1rem;">A: 建议文件名包含日期（如 2026-06-17-会议.mp3），系统会自动提取。不包含日期的文件会使用当天日期。同一天的多个录音会自动加序号。</p>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <p style="font-weight:600; margin-bottom:0.3rem;">Q: 报告在哪里？能导出吗？</p>
+            <p style="color:#475569; padding-left:1rem;">A: 报告文件在 <code style="background:#f1f5f9; padding:0.1rem 0.3rem; border-radius:3px;">output/项目名/reports/</code> 目录下，是标准 HTML 文件，可直接用浏览器打开、发送给别人、或按 Ctrl+P 打印。</p>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <p style="font-weight:600; margin-bottom:0.3rem;">Q: 需要联网吗？</p>
+            <p style="color:#475569; padding-left:1rem;">A: 处理录音时需要联网（调用 AI API）。查看已生成的报告不需要联网，可离线浏览。</p>
+        </div>
+
+        {# ─── 技术架构 ───────────────────────────────── #}
+        <h2 style="font-size:1.2rem; color:#1e293b; margin:2rem 0 0.8rem; padding-bottom:0.3rem; border-bottom:2px solid #e2e8f0;">
+            🔧 技术架构（进阶）
+        </h2>
+        <div style="background:#f8fafc; padding:1rem; border-radius:8px; font-size:0.88rem; color:#475569; line-height:1.8;">
+            <b>语音转录</b>：小米 Mimo mimo-v2.5-asr（自动分段大文件，支持 40 分钟以上录音）<br>
+            <b>文本处理</b>：DeepSeek deepseek-v4-pro（矫正、说话人识别、摘要、提取、记忆）<br>
+            <b>去重机制</b>：SHA256 哈希，同一文件不会重复处理<br>
+            <b>报告生成</b>：Jinja2 模板 + HTML/CSS，离线可读，支持打印<br>
+            <b>API Key</b>：存放在项目根目录 .env 文件中（不会上传到 Git）
+        </div>
+    </div>
+</div>
+{% endblock %}

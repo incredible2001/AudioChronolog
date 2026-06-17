@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        /* ─── 基础排版 ───────────────────────────────────── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #f8f9fa;
+        }
+
+        /* ─── 侧边栏导航 ────────────────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            z-index: 100;
+            font-size: 0.9rem;
+        }
+        .sidebar h2 {
+            font-size: 1rem;
+            color: #f8fafc;
+            margin-bottom: 0.3rem;
+            border: none;
+            padding: 0;
+        }
+        .sidebar .project-name {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 1.2rem;
+        }
+        .sidebar .nav-section {
+            margin-bottom: 1rem;
+        }
+        .sidebar .nav-section h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.4rem;
+        }
+        .sidebar a {
+            color: #cbd5e1;
+            text-decoration: none;
+            display: block;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            transition: background 0.15s;
+        }
+        .sidebar a:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .sidebar .date-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .toc-list li {
+            margin-bottom: 0.2rem;
+        }
+        .sidebar hr {
+            border: none;
+            border-top: 1px solid #334155;
+            margin: 0.8rem 0;
+        }
+        .sidebar .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #60a5fa;
+            font-size: 0.85rem;
+        }
+        .sidebar .back-link:hover { color: #93c5fd; }
+
+        /* ─── 主内容区 ──────────────────────────────────── */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem 2.5rem;
+            max-width: 900px;
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111; }
+        h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: #333; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem; }
+        h3 { font-size: 1.1rem; margin: 1.2rem 0 0.5rem; color: #444; }
+        h4 { font-size: 1rem; margin: 1rem 0 0.4rem; color: #555; }
+        p { margin: 0.5rem 0; }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ─── 记录卡片 ──────────────────────────────────── */
+        .record {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .record-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; }
+        .speakers { font-size: 0.9rem; color: #666; margin: 0.3rem 0; }
+        .speakers span {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        /* ─── 高亮 ──────────────────────────────────────── */
+        mark, .highlight {
+            background: #fef08a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+
+        /* ─── Insights 区块 ─────────────────────────────── */
+        .insights {
+            background: #f1f5f9;
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+        .insights ul { padding-left: 1.5rem; margin: 0.3rem 0; }
+        .insights li { margin: 0.3rem 0; }
+        .action-item-tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.8rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            margin-left: 0.3rem;
+        }
+
+        /* ─── 对话正文（默认展开）───────────────────────── */
+        .conversation {
+            padding: 1rem 1.2rem;
+            background: #fafafa;
+            border-left: 3px solid #cbd5e1;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 0 6px 6px 0;
+        }
+        .conversation p { margin: 0.5rem 0; }
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #2563eb;
+            padding: 0.5rem 0;
+            user-select: none;
+        }
+
+        /* ─── 索引页 ────────────────────────────────────── */
+        .month-list { list-style: none; padding: 0; }
+        .month-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .month-list li:last-child { border-bottom: none; }
+        .month-count { color: #888; font-size: 0.9rem; margin-left: 0.5rem; }
+
+        /* ─── 打印优化 ──────────────────────────────────── */
+        @media print {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 0; }
+            .record { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+        }
+
+        /* ─── 响应式 ────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                max-height: 300px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% if is_index %}
+    {# ─── 总索引页（无侧边栏）──────────────────────────── #}
+    <div class="main-content" style="margin-left: 0;">
+        <h1>📋 AudioChronolog 录音报告索引</h1>
+        <p>项目：<strong>{{ project_name }}</strong></p>
+
+        {% if months %}
+        <h2>按月份浏览</h2>
+        <ul class="month-list">
+            {% for m in months %}
+            <li>
+                <a href="{{ m.filename }}">{{ m.label }}</a>
+                <span class="month-count">{{ m.count }} 条记录</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>暂无记录。</p>
+        {% endif %}
+    </div>
+
+{% else %}
+    {# ─── 月度报告页（带侧边栏）────────────────────────── #}
+
+    {# 侧边栏 #}
+    <nav class="sidebar">
+        <a href="index.html" class="back-link">← 返回索引</a>
+        <h2>{{ project_name }}</h2>
+        <p class="project-name">{{ month_label }}</p>
+        <hr>
+        <div class="nav-section">
+            <h3>记录列表</h3>
+            <ul class="toc-list">
+                {% for rec in records %}
+                <li>
+                    <a href="#record-{{ loop.index }}">
+                        <span class="date-label">{{ rec.date }}</span><br>
+                        {{ rec.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+
+    {# 主内容 #}
+    <div class="main-content">
+        <h1>{{ title }}</h1>
+        <p>{{ month_label }}　|　共 {{ records|length }} 条记录</p>
+
+        {% for rec in records %}
+        <div class="record" id="record-{{ loop.index }}">
+            <div class="record-header">
+                <h3>{{ rec.date }} - {{ rec.title }}</h3>
+            </div>
+
+            {% if rec.speakers %}
+            <p class="speakers">说话人：
+                {% for s in rec.speakers %}<span>{{ s }}</span>{% endfor %}
+            </p>
+            {% endif %}
+
+            {# Insights 区块 #}
+            {% if rec.insights %}
+            <div class="insights">
+                {% if rec.insights.questions %}
+                <h4>❓ 待解决问题</h4>
+                <ul>
+                    {% for q in rec.insights.questions %}
+                    <li>{{ q }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if rec.insights.action_items %}
+                <h4>✅ Action Items</h4>
+                <ul>
+                    {% for item in rec.insights.action_items %}
+                    <li>
+                        {{ item.task }}
+                        {% if item.owner %}<span class="action-item-tag">{{ item.owner }}</span>{% endif %}
+                        {% if item.deadline %}<span class="action-item-tag">⏰ {{ item.deadline }}</span>{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if rec.insights.decisions %}
+                <h4>📌 关键决策</h4>
+                <ul>
+                    {% for d in rec.insights.decisions %}
+                    <li>{{ d }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# 对话正文（默认展开，可折叠） #}
+            <details open>
+                <summary>📄 对话全文（点击折叠）</summary>
+                <div class="conversation">{{ rec.conversation_html }}</div>
+            </details>
+        </div>
+        {% endfor %}
+
+        <footer style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.85rem; color: #999;">
+            由 AudioChronolog 自动生成 | {{ generated_at }}
+        </footer>
+    </div>
+
+{% endif %}
+
+</body>
+</html>

@@ -21,7 +21,6 @@
 | 语音转录 | [小米 Mimo mimo-v2.5-asr](https://token-plan-cn.xiaomimimo.com) | 专业 ASR 模型，支持中文长音频 |
 | 文本处理 | [DeepSeek deepseek-v4-pro](https://platform.deepseek.com) | 矫正、说话人识别、摘要、提取、记忆 |
 
-> **为什么分开用两个模型？** Mimo 的 ASR 在语音识别上性价比高；DeepSeek 在长文本理解和结构化输出上更擅长。各司其职，效果更好。
 
 ### 切换模型
 
@@ -111,7 +110,7 @@ Background 中的参会人员信息是说话人识别的关键。写得越详细
 ```
 input/课题组/
 ├── 2026-06-17-讨论.mp3
-└── 2026-06-17-讨论.md    ← 写上"今日参会：XF、LT、SQ"
+└── 2026-06-17-讨论.md    ← 写上"今日参会：张三、李四、王五"
 ```
 
 ## 目录结构
